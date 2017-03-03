@@ -1,7 +1,6 @@
 # coding: utf8
 
 import time
-import pickle
 import hashlib
 from functools import wraps
 
@@ -17,10 +16,11 @@ def memorize(duration=-1):
             return False
         return time.time() - entry['time'] > duration
 
-    def _compute_key(function, args, kw):
+    def _compute_key(function, args, kwargs):
         '''''序列化并求其哈希值'''
-        key = pickle.dumps((function.func_name, args, kw))
-        return hashlib.sha1(key).hexdigest()
+        return hashlib.sha1(
+            ''.join((str(function.func_name), str(args), str(kwargs)))
+        ).hexdigest()
 
     def _memoize(function):
         @wraps(function)  # 自动复制函数信息
@@ -38,7 +38,8 @@ def memorize(duration=-1):
             # 运行函数
             result = function(*args, **kw)
             # 保存结果
-            _cache[key] = {'value': result, 'time': time.time()}
+            if result is not None:
+                _cache[key] = {'value': result, 'time': time.time()}
             return result
 
         return __memoize
