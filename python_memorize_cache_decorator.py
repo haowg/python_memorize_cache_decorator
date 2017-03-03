@@ -29,8 +29,12 @@ def memorize(duration=-1):
             # 是否已缓存？
             if key in _cache:
                 # 是否过期？
-                if _is_obsolete(_cache[key], duration) is False:
+                if not _is_obsolete(_cache[key], duration):
                     return _cache[key]['value']
+                else:
+                    # 如果有过期的数据清理一次缓存
+                    for key in _cache:
+                        _is_obsolete(_cache[key], duration) and _cache.pop(key)
             # 运行函数
             result = function(*args, **kw)
             # 保存结果
