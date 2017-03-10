@@ -33,7 +33,7 @@ def memorize(duration=-1):
                     return _cache[key]['value']
                 else:
                     # 如果有过期的数据清理一次缓存
-                    for key in _cache:
+                    for key in _cache.keys():
                         _is_obsolete(_cache[key], duration) and _cache.pop(key)
             # 运行函数
             result = function(*args, **kw)
